@@ -8,6 +8,8 @@ def make_bar_chart(year_scores):
     plt.figure(figsize=(8, 6))
     plt.bar(np.array(year_scores.index), np.array(year_scores['SCORE']), color='green', edgecolor='black', width=0.6)
 
+    plt.axhline(y = year_scores['SCORE'].mean(), color='r', linestyle='--')
+
     plt.xlabel('Year')
     plt.ylabel('Madness Score')
     plt.title('Madness Score per year')
@@ -26,7 +28,7 @@ def team_score(row):
     round_advanced = int(math.log2(64/row['ROUND']) if row['ROUND'] != 68 else 0)
     return round_advanced * row['SEED']
 
-# No upsets. Every lower seed beats every higher seed
+# No upsets. Every favored seed wins every game.
 def calculate_min_tourney_score():
     ## first round wipes out 16 - 9 seeds (32 teams elim) = 0 round_advanced
     first_round = 0
