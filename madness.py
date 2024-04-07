@@ -3,7 +3,9 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Make bar chart based off Year and Madness Score
+"""
+    Make bar chart based off Year and Madness Score
+"""
 def make_bar_chart(year_scores): 
     plt.figure(figsize=(8, 6))
     plt.bar(np.array(year_scores.index), np.array(year_scores['SCORE']), color='green', edgecolor='black', width=0.6)
@@ -15,20 +17,23 @@ def make_bar_chart(year_scores):
     plt.title('Madness Score per year')
 
     plt.xticks(rotation=45)
-    # plt.yticks(np.arange(100, 400, 20))
     plt.show()
 
-# round of 64 = 0 round advanced, 32 round_eliminated = 1 round advanced, 
-# 16 = 2 rounds advanced, 8 = 3 rounds advanced, 4 = 4 rounds advanced
-# 2 = 5 rounds advanced, 1 = 6 rounds advanced
+"""
+    round of 64 = 0 round advanced, 32 round_eliminated = 1 round advanced, 
+    16 = 2 rounds advanced, 8 = 3 rounds advanced, 4 = 4 rounds advanced
+    2 = 5 rounds advanced, 1 = 6 rounds advanced
 
-# Based on above: 64 / 2^(round_advanced) = round_eliminated
-# ergo (crank some algebra)... round_advanced = log2(64/round_eliminated)
+    Based on above: 64 / 2^(round_advanced) = round_eliminated
+    ergo (crank some algebra)... round_advanced = log2(64/round_eliminated)
+"""
 def team_score(row):
     round_advanced = int(math.log2(64/row['ROUND']) if row['ROUND'] != 68 else 0)
     return round_advanced * row['SEED']
-
-# No upsets. Every favored seed wins every game.
+    
+"""
+    No upsets. Every favored seed wins every game.
+"""
 def calculate_min_tourney_score():
     ## first round wipes out 16 - 9 seeds (32 teams elim) = 0 round_advanced
     first_round = 0
@@ -46,12 +51,6 @@ def calculate_min_tourney_score():
     return first_round + second_round + third_round + fourth_round + fifth_round + championship
 
 
-def calculate_max_tourney_score():
-    return 0
-
-
-print(calculate_min_tourney_score())
-
 # Read the CSV file into a DataFrame: 
 # team, seed, round eliminated from 2008 onwards (~15 years)
 df = pd.read_csv('madness_2008.csv')
@@ -66,8 +65,6 @@ df['SCORE'] = df.apply(team_score, axis=1)
 # group by year and sum the team scores
 year_scores = df.groupby('YEAR').sum('SCORE').sort_values('SCORE', ascending=False)
 year_scores['SCORE'] = year_scores['SCORE'].apply(lambda x: x - calculate_min_tourney_score())
-
-print(year_scores['SCORE'])
 
 make_bar_chart(year_scores)
 
